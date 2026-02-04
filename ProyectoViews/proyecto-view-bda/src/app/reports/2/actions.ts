@@ -3,15 +3,21 @@
 import { pool } from "../../../../lib/db";
 import { Report2Schema } from "./schema";
 
-export interface CategoriaVenta {
-  nombre_categoria: string;
-  total_ventas: number;
-  total_unidades: number;
+export interface PrestamoVencido {
+  loan_id: number;
+  member_id: number;
+  member_name: string;
+  copy_barcode: string;
+  book_titulo: string;
+  loaned_at: string;
+  due_at: string;
+  dias_retraso: number;
+  monto_sugerido: number;
 }
 
-export async function getCategoriasConMasVentas(rawParams: unknown): Promise<{
+export async function getPrestamosVencidos(rawParams: unknown): Promise<{
   ok: boolean;
-  data?: CategoriaVenta[];
+  data?: PrestamoVencido[];
   error?: string;
 }> {
   try {
@@ -23,15 +29,15 @@ export async function getCategoriasConMasVentas(rawParams: unknown): Promise<{
 
     const q = `
       SELECT *
-      FROM vw_categorias_con_mas_ventas
+      FROM vw_overdue_loans
       LIMIT $1 OFFSET $2;
     `;
 
-    const result = await pool.query<CategoriaVenta>(q, params);
+    const result = await pool.query<PrestamoVencido>(q, params);
 
     return { ok: true, data: result.rows };
   } catch (err) {
-    console.error("Error al mostrar categorias con mas ventas:", err);
-    return { ok: false, error: "Error al mostraar categorias con mas ventas" };
+    console.error("Error al mostrar prestamos vencidos:", err);
+    return { ok: false, error: "Error al mostrar prestamos vencidos" };
   }
 }

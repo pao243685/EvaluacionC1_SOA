@@ -2,7 +2,7 @@
 CREATE ROLE just_vw_role;
 
 -- Usuario de vistas
-CREATE USER vw_user WITH PASSWORD 'annara10';
+CREATE USER vw_user WITH PASSWORD 'annara20';
 
 -- Relación entre ellos
 GRANT just_vw_role TO vw_user;
@@ -18,11 +18,11 @@ REVOKE ALL ON ALL TABLES IN SCHEMA public FROM just_vw_role;
 
 -- Permisos en vistas
 GRANT SELECT ON
-  vw_ranking_usuarios_por_gasto,
-  vw_categorias_con_mas_ventas,
-  vw_productos_mas_vendidos_por_categoria,
-  vw_productos_sin_ventas_ultimo_mes,
-  vw_ventas_totales_por_categoria
+  vw_most_borrowed_books,
+  vw_overdue_loans,
+  vw_fines_summary,
+  vw_member_activity,
+  vw_inventory_health
 TO just_vw_role;
 
 -- Permisos para nuevas vistas

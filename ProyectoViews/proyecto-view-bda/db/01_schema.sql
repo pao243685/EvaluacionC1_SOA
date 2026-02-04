@@ -1,62 +1,38 @@
-CREATE TABLE categorias (
+CREATE TABLE members (
     id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE,
-    descripcion TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    member_type VARCHAR(30) NOT NULL CHECK(member_type in ('estudiante','alumno', 'otro')) ,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ============================================
--- TABLAS ENTIDAD PRINCIPAL
--- ============================================
-
--- Ejemplo: Usuarios
-CREATE TABLE usuarios (
+CREATE TABLE books (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    nombre VARCHAR(100) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    activo BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(100) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    isbn VARCHAR(20) NOT NULL UNIQUE  
 );
 
--- Ejemplo: Productos (con FK a categorías)
-CREATE TABLE productos (
+CREATE TABLE copies (
     id SERIAL PRIMARY KEY,
-    codigo VARCHAR(50) NOT NULL UNIQUE,
-    nombre VARCHAR(200) NOT NULL,
-    descripcion TEXT,
-    precio DECIMAL(10, 2) NOT NULL CHECK (precio >= 0),
-    stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
-    categoria_id INTEGER NOT NULL REFERENCES categorias(id) ON DELETE RESTRICT,
-    activo BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    book_id INT NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+    barcode VARCHAR(50) UNIQUE NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('disponible', 'prestado', 'perdido'))
 );
 
--- ============================================
--- TABLAS DE RELACIÓN (muchos a muchos)
--- ============================================
-
--- Ejemplo: Órdenes
-CREATE TABLE ordenes (
+CREATE TABLE loans (
     id SERIAL PRIMARY KEY,
-    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE RESTRICT,
-    total DECIMAL(12, 2) NOT NULL DEFAULT 0 CHECK (total >= 0),
-    status VARCHAR(20) NOT NULL DEFAULT 'pendiente' 
-        CHECK (status IN ('pendiente', 'pagado', 'enviado', 'entregado', 'cancelado')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    member_id INT NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+    copy_id INT NOT NULL REFERENCES copies(id) ON DELETE RESTRICT,
+    loaned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_at TIMESTAMP NOT NULL,
+    returned_at TIMESTAMP
 );
 
--- Ejemplo: Detalle de órdenes
-CREATE TABLE orden_detalles (
+CREATE TABLE fines (
     id SERIAL PRIMARY KEY,
-    orden_id INTEGER NOT NULL REFERENCES ordenes(id) ON DELETE CASCADE,
-    producto_id INTEGER NOT NULL REFERENCES productos(id) ON DELETE RESTRICT,
-    cantidad INTEGER NOT NULL CHECK (cantidad > 0),
-    precio_unitario DECIMAL(10, 2) NOT NULL CHECK (precio_unitario >= 0),
-    subtotal DECIMAL(12, 2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
-    
-    -- Evitar duplicados del mismo producto en una orden
-    UNIQUE (orden_id, producto_id)
+    loan_id INT NOT NULL REFERENCES loans(id) ON DELETE CASCADE,
+    amount DECIMAL(10, 2) NOT NULL,
+    paid_at TIMESTAMP
 );

@@ -1,167 +1,253 @@
 -- ============================================
--- 1. CATEGORÍAS
+-- =============== MEMBERS =====================
 -- ============================================
 
-INSERT INTO categorias (nombre, descripcion) VALUES
-    ('Electrónica', 'Dispositivos electrónicos y accesorios'),
-    ('Ropa', 'Vestimenta y accesorios de moda'),
-    ('Hogar', 'Artículos para el hogar y decoración'),
-    ('Deportes', 'Equipamiento y ropa deportiva'),
-    ('Libros', 'Libros físicos y digitales');
+INSERT INTO members (name, email, member_type)
+VALUES
+('Ana Torres', 'ana.torres@example.com', 'estudiante'),
+('Luis Martínez', 'lmartinez@example.com', 'alumno'),
+('Carlos Gómez', 'cgomez@example.com', 'estudiante'),
+('María Pérez', 'mperez@example.com', 'otro'),
+('Javier Ruiz', 'jruiz@example.com', 'alumno'),
+('Laura Sánchez', 'lsanchez@example.com', 'estudiante'),
+('Pedro Castillo', 'pcastillo@example.com', 'otro'),
+('Sofía Herrera', 'sherrera@example.com', 'estudiante'),
+('Andrés Rivas', 'arivas@example.com', 'alumno'),
+('Susana Vidal', 'svidal@example.com', 'otro'),
+('Daniel Pardo', 'dpardo@example.com', 'estudiante'),
+('Lucía Vega', 'lvega@example.com', 'alumno'),
+('Pablo Acosta', 'pacosta@example.com', 'otro'),
+('Marta Rojas', 'mrojas@example.com', 'estudiante'),
+('Diego Molina', 'dmolina@example.com', 'alumno'),
+('Isabel Torres', 'itorres@example.com', 'otro'),
+('Hugo Romero', 'hromero@example.com', 'estudiante'),
+('Sara Delgado', 'sdelgado@example.com', 'alumno'),
+('Elena Cruz', 'ecruz@example.com', 'otro'),
+('Tomás Silva', 'tsilva@example.com', 'estudiante'),
+('Camila Soto', 'csoto@example.com', 'alumno'),
+('Raúl Medina', 'rmedina@example.com', 'estudiante'),
+('Valeria León', 'vleon@example.com', 'otro'),
+('Mario Vargas', 'mvargas@example.com', 'alumno'),
+('Esteban Farías', 'efarias@example.com', 'estudiante'),
+('Rocío Luna', 'rluna@example.com', 'otro'),
+('Iván Sanhueza', 'isanhueza@example.com', 'alumno'),
+('Paula Cáceres', 'pcaceres@example.com', 'estudiante'),
+('Natalia Díaz', 'ndiaz@example.com', 'otro'),
+('Felipe Araya', 'faraya@example.com', 'alumno'),
+('Claudia Muñoz', 'cmunoz@example.com', 'estudiante'),
+('Cristian Soto', 'csoto2@example.com', 'otro'),
+('Gabriela Gaete', 'ggaete@example.com', 'alumno'),
+('Matías Pino', 'mpino@example.com', 'estudiante'),
+('Patricia Mora', 'pmora@example.com', 'otro'),
+('Sebastián Ibarra', 'sibarra@example.com', 'alumno'),
+('Fernanda Saavedra', 'fsaavedra@example.com', 'estudiante'),
+('Rodrigo Peña', 'rpena@example.com', 'otro'),
+('Andrea Orellana', 'aorellana@example.com', 'estudiante'),
+('Constanza Reyes', 'creyes@example.com', 'alumno');
+
+
 
 -- ============================================
--- 2. USUARIOS (10 + edge case)
+-- ================= BOOKS =====================
 -- ============================================
 
-INSERT INTO usuarios (email, nombre, password_hash) VALUES
-    ('luna.sanchez@example.com', 'Luna Sánchez', 'hash_1'),
-    ('mateo.rios@example.com', 'Mateo Ríos', 'hash_2'),
-    ('sofia.mendoza@example.com', 'Sofía Mendoza', 'hash_3'),
-    ('diego.martinez@example.com', 'Diego Martínez', 'hash_4'),
-    ('valeria.castillo@example.com', 'Valeria Castillo', 'hash_5'),
-    ('nicolas.torres@example.com', 'Nicolás Torres', 'hash_6'),
-    ('camila.perez@example.com', 'Camila Pérez', 'hash_7'),
-    ('julian.rodriguez@example.com', 'Julián Rodríguez', 'hash_8'),
-    ('mariana.lopez@example.com', 'Mariana López', 'hash_9'),
-    ('sebastian.vargas@example.com', 'Sebastián Vargas', 'hash_10'),
+INSERT INTO books (title, author, category, isbn)
+VALUES
+('Cien Años de Soledad', 'Gabriel García Márquez', 'Novela', '9780307474728'),
+('1984', 'George Orwell', 'Distopía', '9780141036144'),
+('El Principito', 'Antoine de Saint-Exupéry', 'Infantil', '9780156012195'),
+('Don Quijote de la Mancha', 'Miguel de Cervantes', 'Clásico', '9780060934347'),
+('La Sombra del Viento', 'Carlos Ruiz Zafón', 'Misterio', '9788408172173'),
+('Fahrenheit 451', 'Ray Bradbury', 'Ciencia Ficción', '9781451673319'),
+('El Hobbit', 'J.R.R. Tolkien', 'Fantasía', '9780547928227'),
+('Crimen y Castigo', 'Fiódor Dostoievski', 'Clásico', '9780486415871'),
+('Orgullo y Prejuicio', 'Jane Austen', 'Romance', '9780141439518'),
+('El Nombre del Viento', 'Patrick Rothfuss', 'Fantasía', '9788401352831'),
+('Los Juegos del Hambre', 'Suzanne Collins', 'Distopía', '9780439023528'),
+('El Código Da Vinci', 'Dan Brown', 'Misterio', '9780307474278'),
+('It', 'Stephen King', 'Terror', '9781501142970'),
+('Drácula', 'Bram Stoker', 'Terror', '9780486411095'),
+('La Odisea', 'Homero', 'Clásico', '9780140268867'),
+('Harry Potter y la Piedra Filosofal', 'J.K. Rowling', 'Fantasía', '9780747532699'),
+('Sapiens', 'Yuval Noah Harari', 'Historia', '9780062316097'),
+('El Alquimista', 'Paulo Coelho', 'Ficción', '9780062315007'),
+('La Metamorfosis', 'Franz Kafka', 'Clásico', '9780553213690'),
+('Ulises', 'James Joyce', 'Clásico', '9780679722762'),
+('El Perfume', 'Patrick Süskind', 'Ficción', '9780679423492'),
+('Rayuela', 'Julio Cortázar', 'Ficción', '9788437604947'),
+('La Iliada', 'Homero', 'Clásico', '9780140275360'),
+('El Señor de las Moscas', 'William Golding', 'Ficción', '9780399501487'),
+('Los Miserables', 'Victor Hugo', 'Clásico', '9780451419439'),
+('Matar a un Ruiseñor', 'Harper Lee', 'Drama', '9780061120084'),
+('El Gran Gatsby', 'F. Scott Fitzgerald', 'Ficción', '9780743273565'),
+('La Casa de los Espíritus', 'Isabel Allende', 'Realismo Mágico', '9780553383805'),
+('Neuromante', 'William Gibson', 'Cyberpunk', '9780441569595'),
+('Fundación', 'Isaac Asimov', 'Ciencia Ficción', '9780553293357'),
+('Ready Player One', 'Ernest Cline', 'Ciencia Ficción', '9780307887443'),
+('El Padrino', 'Mario Puzo', 'Drama', '9780451205766'),
+('Jurassic Park', 'Michael Crichton', 'Ciencia Ficción', '9780345538987'),
+('Dune', 'Frank Herbert', 'Ciencia Ficción', '9780441013593'),
+('El Silmarillion', 'J.R.R. Tolkien', 'Fantasía', '9780618126989'),
+('Inferno', 'Dan Brown', 'Thriller', '9780804172264'),
+('Sherlock Holmes: Estudio en Escarlata', 'Arthur Conan Doyle', 'Misterio', '9780486243054'),
+('Frankenstein', 'Mary Shelley', 'Terror', '9780486282114'),
+('El Psicoanalista', 'John Katzenbach', 'Thriller', '9788499086661'),
+('Carrie', 'Stephen King', 'Terror', '9780307743664');
 
-    -- Edge case
-    ('usuario.muy.largo@subdominio.empresa.ejemplo.com',
-     'Nombre Muy Largo Para Probar Límites en la Base de Datos',
-     'hash_11');
 
--- ============================================
--- 3. PRODUCTOS
--- ============================================
-
-INSERT INTO productos (codigo, nombre, descripcion, precio, stock, categoria_id) VALUES
-    -- Electrónica
-    ('ELEC-001', 'Laptop Pro 15"', 'Laptop de alto rendimiento', 1299.99, 50, 1),
-    ('ELEC-002', 'Mouse Inalámbrico', 'Mouse Bluetooth', 29.99, 200, 1),
-    ('ELEC-003', 'Teclado Mecánico', 'RGB switches azules', 89.99, 75, 1),
-    ('ELEC-004', 'Monitor 27"', '4K IPS', 399.99, 30, 1),
-    ('ELEC-005', 'Webcam HD', '1080p con micrófono', 59.99, 100, 1),
-    ('ELEC-006', 'Audífonos ANC', 'Cancelación activa', 129.99, 80, 1),
-
-    -- Ropa
-    ('ROPA-001', 'Camiseta Básica', 'Algodón 100%', 19.99, 500, 2),
-    ('ROPA-002', 'Jeans Clásico', 'Mezclilla azul', 49.99, 200, 2),
-    ('ROPA-003', 'Sudadera Tech', 'Con capucha', 39.99, 150, 2),
-
-    -- Hogar
-    ('HOME-001', 'Lámpara LED', 'Regulable', 34.99, 80, 3),
-    ('HOME-002', 'Silla Ergonómica', 'Ajustable', 249.99, 25, 3),
-
-    -- Deportes
-    ('SPORT-001', 'Balón de Fútbol', 'Profesional', 34.99, 90, 4),
-    ('SPORT-002', 'Mancuernas 10kg', 'Par de mancuernas', 59.99, 40, 4),
-
-    -- Libros
-    ('BOOK-001', 'Clean Code', 'Robert C. Martin', 39.99, 120, 5),
-
-    -- Edge case
-    ('EDGE-001', 'Producto Gratuito', 'Precio 0 y stock 0', 0.00, 0, 1);
 
 -- ============================================
--- 4. ÓRDENES (varias por usuario)
+-- ================ COPIES =====================
 -- ============================================
 
-INSERT INTO ordenes (usuario_id, total, status) VALUES
-    (1, 1419.97, 'entregado'),
-    (1, 399.99, 'pagado'),
-    (1, 29.99, 'pendiente'),
+INSERT INTO copies (book_id, barcode, status)
+VALUES
+(1, 'BC0001', 'disponible'),
+(1, 'BC0002', 'prestado'),
+(2, 'BC0003', 'disponible'),
+(2, 'BC0004', 'disponible'),
+(3, 'BC0005', 'prestado'),
+(4, 'BC0006', 'disponible'),
+(5, 'BC0007', 'disponible'),
+(6, 'BC0008', 'prestado'),
+(7, 'BC0009', 'disponible'),
+(7, 'BC0010', 'disponible'),
+(8, 'BC0011', 'prestado'),
+(9, 'BC0012', 'disponible'),
+(10,'BC0013', 'prestado'),
+(11,'BC0014', 'disponible'),
+(12,'BC0015', 'disponible'),
+(13,'BC0016', 'prestado'),
+(14,'BC0017', 'disponible'),
+(15,'BC0018', 'disponible'),
+(16,'BC0019', 'prestado'),
+(17,'BC0020', 'disponible'),
+(18,'BC0021', 'disponible'),
+(19,'BC0022', 'prestado'),
+(20,'BC0023', 'disponible'),
+(21,'BC0024', 'disponible'),
+(22,'BC0025', 'prestado'),
+(23,'BC0026', 'disponible'),
+(24,'BC0027', 'disponible'),
+(25,'BC0028', 'prestado'),
+(26,'BC0029', 'disponible'),
+(27,'BC0030', 'disponible'),
+(28,'BC0031', 'prestado'),
+(29,'BC0032', 'disponible'),
+(30,'BC0033', 'disponible'),
+(31,'BC0034', 'disponible'),
+(32,'BC0035', 'prestado'),
+(33,'BC0036', 'disponible'),
+(34,'BC0037', 'disponible'),
+(35,'BC0038', 'prestado'),
+(36,'BC0039', 'disponible'),
+(37,'BC0040', 'disponible'),
+(38,'BC0041', 'prestado'),
+(39,'BC0042', 'disponible'),
+(40,'BC0043', 'disponible'),
+(20,'BC0044', 'disponible'),
+(14,'BC0045', 'disponible');
 
-    (2, 69.98, 'enviado'),
-    (2, 129.99, 'entregado'),
 
-    (3, 284.98, 'pagado'),
-    (3, 59.99, 'pendiente'),
-
-    (4, 89.98, 'pendiente'),
-    (4, 49.99, 'entregado'),
-
-    (5, 1299.99, 'pagado'),
-    (5, 19.99, 'entregado'),
-
-    (6, 159.98, 'entregado'),
-    (6, 399.99, 'pendiente'),
-    (6, 39.99, 'pagado'),
-
-    (7, 399.99, 'enviado'),
-    (7, 89.99, 'entregado'),
-
-    (8, 84.98, 'pendiente'),
-    (8, 19.99, 'entregado'),
-
-    (9, 524.97, 'pagado'),
-    (9, 129.99, 'pagado'),
-    (9, 59.99, 'enviado'),
-
-    (10, 1299.99, 'entregado');
 
 -- ============================================
--- 5. DETALLES DE ÓRDENES
+-- ================= LOANS =====================
 -- ============================================
 
-INSERT INTO orden_detalles (orden_id, producto_id, cantidad, precio_unitario) VALUES
-    -- Luna (usuario 1)
-    (1, 1, 1, 1299.99),
-    (1, 2, 1, 29.99),
-    (1, 3, 1, 89.99),
+INSERT INTO loans (member_id, copy_id, due_at, returned_at)
+VALUES
+(1, 2, NOW() + INTERVAL '7 days', NULL),
+(3, 5, NOW() - INTERVAL '2 days', NULL),
+(4, 8, NOW() + INTERVAL '4 days', NOW()),
+(6, 11, NOW() - INTERVAL '5 days', NULL),
+(7, 13, NOW() + INTERVAL '6 days', NULL),
+(9, 16, NOW() - INTERVAL '10 days', NULL),
+(10, 19, NOW() + INTERVAL '3 days', NOW()),
+(12, 22, NOW() - INTERVAL '1 days', NULL),
+(13, 25, NOW() + INTERVAL '10 days', NULL),
+(14, 28, NOW() - INTERVAL '8 days', NULL),
+(15, 31, NOW() + INTERVAL '2 days', NULL),
+(17, 32, NOW() - INTERVAL '6 days', NULL),
+(18, 35, NOW() + INTERVAL '14 days', NOW()),
+(20, 38, NOW() - INTERVAL '3 days', NULL),
+(21, 41, NOW() + INTERVAL '9 days', NULL),
+(23, 2, NOW() - INTERVAL '4 days', NULL),
+(24, 5, NOW() + INTERVAL '6 days', NULL),
+(25, 8, NOW() - INTERVAL '7 days', NULL),
+(26, 13, NOW() + INTERVAL '8 days', NULL),
+(27, 16, NOW() - INTERVAL '12 days', NULL),
+(28, 19, NOW() + INTERVAL '5 days', NULL),
+(29, 22, NOW() - INTERVAL '2 days', NULL),
+(30, 25, NOW() + INTERVAL '11 days', NULL),
+(31, 28, NOW() - INTERVAL '9 days', NULL),
+(32, 31, NOW() + INTERVAL '4 days', NULL),
+(33, 32, NOW() - INTERVAL '5 days', NULL),
+(34, 35, NOW() + INTERVAL '7 days', NULL),
+(35, 38, NOW() - INTERVAL '3 days', NULL),
+(36, 41, NOW() + INTERVAL '6 days', NULL),
+(37, 2, NOW() - INTERVAL '1 days', NULL),
+(38, 5, NOW() + INTERVAL '9 days', NULL),
+(39, 8, NOW() - INTERVAL '10 days', NULL),
+(40, 13, NOW() + INTERVAL '5 days', NULL),
+(2, 16, NOW() - INTERVAL '7 days', NULL),
+(5, 19, NOW() + INTERVAL '12 days', NULL),
+(8, 22, NOW() - INTERVAL '3 days', NULL),
+(11, 25, NOW() + INTERVAL '7 days', NULL),
+(16, 28, NOW() - INTERVAL '11 days', NULL),
+(19, 31, NOW() + INTERVAL '3 days', NULL),
+(22, 32, NOW() - INTERVAL '4 days', NULL),
+(23, 35, NOW() + INTERVAL '5 days', NULL),
+(26, 38, NOW() - INTERVAL '6 days', NULL),
+(29, 41, NOW() + INTERVAL '8 days', NULL),
+(30, 2, NOW() - INTERVAL '13 days', NULL),
+(33, 5, NOW() + INTERVAL '4 days', NULL),
+(36, 8, NOW() - INTERVAL '2 days', NULL),
+(37, 13, NOW() + INTERVAL '6 days', NULL),
+(38, 16, NOW() - INTERVAL '5 days', NULL),
+(39, 19, NOW() + INTERVAL '10 days', NULL),
+(40, 22, NOW() - INTERVAL '7 days', NULL),
+(5, 25, NOW() + INTERVAL '3 days', NULL),
+(8, 28, NOW() - INTERVAL '9 days', NULL),
+(11, 31, NOW() + INTERVAL '15 days', NULL),
+(17, 32, NOW() - INTERVAL '4 days', NULL),
+(21, 35, NOW() + INTERVAL '2 days', NULL),
+(28, 38, NOW() - INTERVAL '8 days', NULL);
 
-    (2, 4, 1, 399.99),
 
-    (3, 2, 1, 29.99),
 
-    -- Mateo (usuario 2)
-    (4, 7, 2, 19.99),
-    (4, 5, 1, 59.99),
+-- ============================================
+-- ================= FINES =====================
+-- Only for overdue loans
+-- ============================================
 
-    (5, 6, 1, 129.99),
-
-    -- Sofía (usuario 3)
-    (6, 12, 1, 249.99),
-    (6, 11, 1, 34.99),
-
-    (7, 5, 1, 59.99),
-
-    -- Diego (usuario 4)
-    (8, 8, 1, 49.99),
-    (8, 9, 1, 39.99),
-
-    (9, 8, 1, 49.99),
-
-    -- Valeria (usuario 5)
-    (10, 1, 1, 1299.99),
-
-    (11, 7, 1, 19.99),
-
-    -- Nicolás (usuario 6)
-    (12, 6, 1, 129.99),
-    (12, 14, 1, 29.99),
-
-    (13, 4, 1, 399.99),
-
-    (14, 3, 1, 39.99),
-
-    -- Camila (usuario 7)
-    (15, 4, 1, 399.99),
-
-    (16, 3, 1, 89.99),
-
-    -- Julián (usuario 8)
-    (17, 3, 1, 89.99),
-
-    (18, 7, 1, 19.99),
-
-    -- Mariana (usuario 9)
-    (19, 3, 1, 89.99),
-    (19, 4, 1, 399.99),
-    (19, 2, 1, 29.99),
-
-    (20, 6, 1, 129.99),
-
-    (21, 5, 1, 59.99),
-
-    -- Sebastián (usuario 10)
-    (22, 1, 1, 1299.99);
+INSERT INTO fines (loan_id, amount, paid_at)
+VALUES
+(2, 1500, NULL),
+(4, 2000, NOW()),
+(6, 2500, NULL),
+(8, 1800, NULL),
+(9, 3000, NOW()),
+(12, 2200, NULL),
+(14, 1500, NULL),
+(16, 1700, NOW()),
+(18, 2100, NULL),
+(20, 2600, NULL),
+(22, 1400, NOW()),
+(24, 1900, NULL),
+(26, 2400, NULL),
+(28, 1300, NOW()),
+(30, 2700, NULL),
+(31, 1100, NOW()),
+(33, 1600, NULL),
+(35, 2500, NULL),
+(37, 2300, NOW()),
+(39, 2800, NULL),
+(40, 1900, NULL),
+(42, 1750, NULL),
+(44, 1450, NOW()),
+(46, 2100, NULL),
+(48, 2500, NOW()),
+(50, 2050, NULL),
+(52, 1350, NOW()),
+(54, 1950, NULL),
+(56, 1850, NULL);

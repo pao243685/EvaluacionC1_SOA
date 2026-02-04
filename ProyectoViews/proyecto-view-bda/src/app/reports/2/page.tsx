@@ -1,4 +1,4 @@
-import { getCategoriasConMasVentas } from "./actions";
+import { getPrestamosVencidos } from "./actions";
 import { Report2Schema } from "./schema";
 
 interface Reporte2PageProps {
@@ -8,27 +8,24 @@ interface Reporte2PageProps {
 export default async function Reporte2Page({ searchParams }: Reporte2PageProps) {
   const params = Report2Schema.parse(await searchParams);
 
-  const { ok, data, error } = await getCategoriasConMasVentas(params);
+  const { ok, data, error } = await getPrestamosVencidos(params);
   if (!ok || !data) return <div>Error: {error}</div>;
 
-  const totalVentas = data.reduce(
-    (acc, row) => acc + Number(row.total_ventas),
-    0
-  );
+  const totalPrestamosVencidos = data.length;
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold">
-        Reporte 2 - Categorías con mas ventas
+        Reporte 2 - Prestamos vencidos con dias de retraso y monto sugerido
       </h1>
       <p className="text-gray-600">
-        Ranking de categorías con mayores ventas con paginacion
+        Prestamos vencidos con dias de retraso y monto sugerido
       </p>
 
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div className=" p-4 rounded">
           <h3 className="text-lg font-semibold">
-            KPI: Total Ventas ${totalVentas.toFixed(2)}
+            KPI: Total Prestamos Vencidos {totalPrestamosVencidos}
           </h3>
           
         </div>
@@ -80,18 +77,30 @@ export default async function Reporte2Page({ searchParams }: Reporte2PageProps) 
       <table className="mt-6 border-collapse border w-full">
         <thead>
           <tr className="bg-green-200">
-            <th className="border px-4 py-2">Categoría</th>
-            <th className="border px-4 py-2">Total Ventas</th>
-            <th className="border px-4 py-2">Total Unidades</th>
+            <th className="border px-4 py-2">Prestamo ID</th>
+            <th className="border px-4 py-2">Miembro ID</th>
+            <th className="border px-4 py-2">Miembro Nombre</th>
+            <th className="border px-4 py-2">Copia Codigo de Barras</th>
+            <th className="border px-4 py-2">Titulo del Libro</th>
+            <th className="border px-4 py-2">Fecha de Prestamo</th>
+            <th className="border px-4 py-2">Fecha de Vencimiento</th>
+            <th className="border px-4 py-2">Dias de Retraso</th>
+            <th className="border px-4 py-2">Monto Sugerido</th>
           </tr>
         </thead>
 
         <tbody>
-          {data.map((c) => (
-            <tr key={c.nombre_categoria}>
-              <td className="border px-4 py-2">{c.nombre_categoria}</td>
-              <td className="border px-4 py-2">${c.total_ventas}</td>
-              <td className="border px-4 py-2">{c.total_unidades}</td>
+          {data!.map((c) => (
+            <tr key={c.loan_id}>
+              <td className="border px-4 py-2">{c.loan_id}</td>
+              <td className="border px-4 py-2">{c.member_id}</td>
+              <td className="border px-4 py-2">{c.member_name}</td>
+              <td className="border px-4 py-2">{c.copy_barcode}</td>
+              <td className="border px-4 py-2">{c.book_titulo}</td>
+              <td className="border px-4 py-2">{c.loaned_at}</td>
+              <td className="border px-4 py-2">{c.due_at}</td>
+              <td className="border px-4 py-2">{c.dias_retraso}</td>
+              <td className="border px-4 py-2">${c.monto_sugerido.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

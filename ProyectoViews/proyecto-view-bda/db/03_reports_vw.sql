@@ -1,158 +1,166 @@
 
--- VIEW: vw_ranking_usuarios_por_gasto
+-- VIEW: vw_most_borrowed_books
 -- Qué devuelve:
---   Usuarios frecuentes con métricas de órdenes y ranking por gasto total
+--   Los libros mas prestados 
 -- Grain:
---   1 fila representa 1 usuario
+--   1 fila representa 1 libro
 -- Métricas:
---   total_ordenes, total_gastado, promedio_por_orden, ranking_por_gasto
--- Por qué GROUP BY / HAVING:
---   Se agrupa por usuario para calcular métricas agregadas
---   y se filtran usuarios con más de 3 órdenes
+--   count de libros prestados
 -- VERIFY:
---   SELECT * FROM vw_ranking_usuarios_por_gasto LIMIT 5;
---   SELECT COUNT(*) FROM vw_ranking_usuarios_por_gasto;
+--   SELECT * FROM vw_most_borrowed_books LIMIT 5;
+--   SELECT COUNT(*) FROM vw_most_borrowed_books;
 
-
-CREATE OR REPLACE VIEW vw_ranking_usuarios_por_gasto AS
-WITH resumen_usuarios AS (
+CREATE OR REPLACE VIEW vw_most_borrowed_books AS
   SELECT
-    u.id AS usuario_id,
-    u.nombre AS usuario_nombre,
-    COUNT(o.id) AS total_ordenes,
-    SUM(o.total) AS total_gastado,
-    AVG(o.total) AS promedio_por_orden
-  FROM usuarios u
-  JOIN ordenes o ON o.usuario_id = u.id
-  WHERE o.status <> 'cancelado'
-  GROUP BY u.id, u.nombre
+    u.id AS libro_id,
+    u.title AS libro_titulo,
+      COUNT(l.id) AS total_prestados,
+      RANK() OVER (
+        ORDER BY COUNT(l.id) DESC
+        ) AS prestados_rank
+  FROM books u
+  LEFT JOIN copies c ON u.id = c.book_id
+  LEFT JOIN loans l ON c.id = l.copy_id
+  GROUP BY u.id, u.title;
+
+
+-- VIEW: vw_overdue_loans
+-- Qué devuelve:
+--   Prestamos vencidos con dias de retraso y monto sugerido.
+-- Grain:
+--   1 fila representa 1 prestamo vencido
+-- Métricas:
+--   count de dias_retraso, sum de monto_sugerido
+-- VERIFY:
+--   SELECT * FROM vw_overdue_loans LIMIT 5;
+--   SELECT COUNT(*) FROM vw_overdue_loans;
+
+CREATE OR REPLACE VIEW vw_overdue_loans AS
+WITH multas_cte AS (
+    SELECT
+        l.id AS loan_id,
+        m.id AS member_id,
+        m.name AS member_name,
+        c.barcode AS copy_barcode,
+        b.title AS book_titulo,
+        l.loaned_at AS loaned_at,
+        l.due_at AS due_at,
+        
+        -- convertir a días enteros
+        EXTRACT(DAY FROM (CURRENT_DATE - l.due_at))::int AS dias_retraso,
+
+        CASE
+            WHEN EXTRACT(DAY FROM (CURRENT_DATE - l.due_at))::int <= 0 THEN 0
+            ELSE GREATEST(5, EXTRACT(DAY FROM (CURRENT_DATE - l.due_at))::int * 1)
+        END AS monto_sugerido
+
+    FROM loans l
+    JOIN members m ON l.member_id = m.id
+    JOIN copies c  ON l.copy_id = c.id
+    JOIN books b   ON c.book_id = b.id
+    WHERE l.returned_at IS NULL
 )
-SELECT
-  usuario_id,
-  usuario_nombre,
-  total_ordenes,
-  total_gastado,
-  promedio_por_orden,
-  RANK() OVER (ORDER BY total_gastado DESC) AS ranking_por_gasto
-FROM resumen_usuarios
-WHERE total_ordenes > 2;
+SELECT *
+FROM multas_cte
+WHERE dias_retraso >= 1
+ORDER BY dias_retraso DESC;
 
 
--- VIEW: vw_categorias_con_mas_ventas
+
+
+-- VIEW: vw_fines_summary
 -- Qué devuelve:
---   Categorías con ventas totales relevantes
+--  Resumen mensual de multas pagadas y pendientes
 -- Grain:
---   1 fila representa 1 categoría
+--   1 fila representa 1 multa
 -- Métricas:
---   total_ventas, total_unidades
--- Por qué GROUP BY / HAVING:
---   Se agrupa por categoría y se filtran aquellas con ventas significativas
+--   conut de total de multas, suma de multas pagas y por pagar
 -- VERIFY:
---   SELECT * FROM vw_categorias_con_mas_ventas;
+--   SELECT * FROM vw_fines_summary LIMIT 5;
+--   SELECT COUNT(*) FROM vw_fines_summary;
 
-
-CREATE OR REPLACE VIEW vw_categorias_con_mas_ventas AS
+CREATE OR REPLACE VIEW vw_fines_summary AS
 SELECT
-  c.id AS categoria_id,
-  c.nombre AS nombre_categoria,
-  SUM(od.subtotal) AS total_ventas,
-  SUM(od.cantidad) AS total_unidades
-FROM categorias c
-JOIN productos p ON p.categoria_id = c.id
-JOIN orden_detalles od ON od.producto_id = p.id
-JOIN ordenes o ON o.id = od.orden_id
-WHERE o.status <> 'cancelado'
-GROUP BY c.id, c.nombre
-HAVING SUM(od.subtotal) > 500;
+    m.id AS usuario_id,
+    DATE_TRUNC('month', COALESCE(f.paid_at, CURRENT_DATE)) AS mes,
+    COUNT(*) AS total_multas,
+    SUM(CASE WHEN f.paid_at IS NOT NULL THEN 1 ELSE 0 END) AS pagadas,
+    SUM(CASE WHEN f.paid_at IS NULL THEN 1 ELSE 0 END) AS pendientes
+FROM fines f
+JOIN loans l ON f.loan_id = l.id
+JOIN members m ON l.member_id = m.id
+GROUP BY m.id, DATE_TRUNC('month', COALESCE(f.paid_at, CURRENT_DATE));
 
 
 
--- VIEW: vw_productos_mas_vendidos_por_categoria
+
+-- VIEW: vw_member_activity
 -- Qué devuelve:
---   Productos más vendidos dentro de cada categoría
+--   Socios activos y tasa de atraso
 -- Grain:
---   1 fila representa 1 producto por categoría
+--   1 fila representa 1 miembro
 -- Métricas:
---   total_unidades, total_ventas, ranking_categoria
--- Por qué GROUP BY:
---   Se agrupa por producto para calcular ventas
+--   
 -- VERIFY:
---   SELECT * FROM vw_productos_mas_vendidos_por_categoria LIMIT 5;
+--   SELECT * FROM vw_member_activity LIMIT 5;
+--   SELECT COUNT(*) FROM vw_member_activity;
+
+CREATE OR REPLACE VIEW vw_member_activity AS
+WITH consulta1 AS (
+    SELECT 
+        m.id AS id_miembro,
+        m.name AS nombre_miembro,
+        COUNT(l.id) AS total_prestamos,
+        COUNT(f.id) AS total_multas,
+        SUM(
+            CASE 
+                WHEN l.due_at < CURRENT_DATE AND l.returned_at IS NULL THEN 1 
+                ELSE 0 
+            END
+        ) AS prestamos_atrasados
+    FROM members m
+    LEFT JOIN loans l ON m.id = l.member_id
+    LEFT JOIN fines f ON l.id = f.loan_id
+    GROUP BY m.id, m.name
+)
+SELECT 
+    id_miembro,
+    nombre_miembro,
+    total_prestamos,
+    total_multas,
+    prestamos_atrasados,
+    ROUND(
+        COALESCE(prestamos_atrasados::decimal / NULLIF(total_prestamos, 0), 0) * 100,
+        2
+    ) AS tasa_atraso
+FROM consulta1;
 
 
-CREATE OR REPLACE VIEW vw_productos_mas_vendidos_por_categoria AS
-SELECT
-  c.nombre AS categoria,
-  p.id AS producto_id,
-  p.nombre AS producto,
-  SUM(od.cantidad) AS total_unidades,
-  SUM(od.subtotal) AS total_ventas,
-  RANK() OVER (
-    PARTITION BY c.id
-    ORDER BY SUM(od.subtotal) DESC
-  ) AS ranking_categoria
-FROM categorias c
-JOIN productos p ON p.categoria_id = c.id
-JOIN orden_detalles od ON od.producto_id = p.id
-JOIN ordenes o ON o.id = od.orden_id
-WHERE o.status <> 'cancelado'
-GROUP BY c.id, c.nombre, p.id, p.nombre;
 
-
--- VIEW: vw_productos_sin_ventas_ultimo_mes
+-- VIEW: vw_inventory_health
 -- Qué devuelve:
---   Productos que no han tenido ventas en el último mes
+--   Salud de inventario por categoria de libro
 -- Grain:
---   1 fila representa 1 producto
+--   1 fila representa 1 categoria de libro
 -- Métricas:
---   unidades_vendidas
--- Por qué GROUP BY:
---   Se agrupa por producto para evaluar ventas recientes
+--   count de libros, count de copias disponibles, count de copias prestadas, count de copias perdidas
+
 -- VERIFY:
---   SELECT * FROM vw_productos_sin_ventas_ultimo_mes;
+--   SELECT * FROM vw_inventory_health LIMIT 5;
+--   SELECT COUNT(*) FROM vw_inventory_health;
+
+CREATE OR REPLACE VIEW vw_inventory_health AS
+SELECT 
+    b.category AS categoria,
+    COUNT(DISTINCT b.id) AS total_libros,
+    COUNT(c.id) AS total_copias,
+    SUM(CASE WHEN c.status = 'disponible' THEN 1 ELSE 0 END) AS copias_disponibles,
+    SUM(CASE WHEN c.status = 'prestado' THEN 1 ELSE 0 END) AS copias_prestadas,
+    SUM(CASE WHEN c.status = 'perdido' THEN 1 ELSE 0 END) AS copias_perdidas
+FROM books b
+LEFT JOIN copies c ON b.id = c.book_id
+GROUP BY b.category;
 
 
-CREATE OR REPLACE VIEW vw_productos_sin_ventas_ultimo_mes AS
-SELECT
-  p.id AS producto_id,
-  p.nombre AS producto,
-  COALESCE(SUM(od.cantidad), 0) AS unidades_vendidas
-FROM productos p
-LEFT JOIN orden_detalles od ON od.producto_id = p.id
-LEFT JOIN ordenes o 
-  ON o.id = od.orden_id
-  AND o.created_at >= CURRENT_DATE - INTERVAL '1 month'
-GROUP BY p.id, p.nombre
-HAVING COALESCE(SUM(od.cantidad), 0) = 0;
+   
 
-
-
--- VIEW: vw_ventas_totales_por_categoria
--- Qué devuelve:
---   Ventas totales por categoría con clasificación de desempeño
--- Grain:
---   1 fila representa 1 categoría
--- Métricas:
---   total_ventas, nivel_ventas
--- Por qué GROUP BY:
---   Se agrupa por categoría para calcular ventas totales
--- VERIFY:
---   SELECT * FROM vw_ventas_totales_por_categoria;
-
-
-CREATE OR REPLACE VIEW vw_ventas_totales_por_categoria AS
-SELECT
-  c.id AS categoria_id,
-  c.nombre AS categoria,
-  SUM(od.subtotal) AS total_ventas,
-  CASE
-    WHEN SUM(od.subtotal) >= 5000 THEN 'ALTA'
-    WHEN SUM(od.subtotal) >= 2000 THEN 'MEDIA'
-    ELSE 'BAJA'
-  END AS nivel_ventas
-FROM categorias c
-JOIN productos p ON p.categoria_id = c.id
-JOIN orden_detalles od ON od.producto_id = p.id
-JOIN ordenes o ON o.id = od.orden_id
-WHERE o.status <> 'cancelado'
-GROUP BY c.id, c.nombre;

@@ -1,4 +1,4 @@
-import { getProductosMasVendidos } from "./actions";
+import { getResumenMultas } from "./actions";
 import { Report3Schema } from "./schema";
 
 interface Reporte3PageProps {
@@ -8,45 +8,32 @@ interface Reporte3PageProps {
 export default async function Reporte3Page({ searchParams }: Reporte3PageProps) {
     const params = Report3Schema.parse(await searchParams);
 
-    const { ok, data, error } = await getProductosMasVendidos(params);
+    const { ok, data, error } = await getResumenMultas(params);
     if (!ok || !data) return <div>Error: {error}</div>;
 
-    const totalProductos = data.reduce(
-        (acc, row) => acc + Number(row.total_unidades),
+    const totalMultas = data.reduce(
+        (acc, row) => acc + Number(row.total_multas),
         0
     );
 
     return (
         <div className="p-8">
             <h1 className="text-2xl font-bold">
-                Reporte 3 - Productos más vendidos por categoría
+                Reporte 3 - Resumen de multas por usuario y mes
             </h1>
 
             <p className="text-gray-600">
-                Muestra los productos con mayores unidades vendidas filtrados por categoría
+                Muestra el resumen de multas por usuario y mes
                 con paginacion.
             </p>
 
             <h3 className="text-xl font-semibold mt-4">
-                KPI: Total unidades vendidas: {totalProductos}
+                KPI: Total multas: {totalMultas}
             </h3>
 
             <form method="get" className="mt-6 p-4 border rounded bg-gray-50">
                 <p className="font-semibold mb-3">Filtros y Paginación:</p>
                 <div className="flex gap-4 items-center flex-wrap">
-                    <div className="flex flex-col">
-                        <label htmlFor="categoria" className="text-sm mb-1">
-                            Categoría:
-                        </label>
-                        <input
-                            id="categoria"
-                            name="categoria"
-                            type="text"
-                            defaultValue={params.categoria || ""}
-                            placeholder="Ej: Electrónica"
-                            className="px-3 py-2 border rounded w-40"
-                        />
-                    </div>
 
                     <div className="flex flex-col">
                         <label htmlFor="page" className="text-sm mb-1">
@@ -88,21 +75,14 @@ export default async function Reporte3Page({ searchParams }: Reporte3PageProps) 
                 </div>
             </form>
 
-            {(params.categoria) && (
-                <div className="mt-4 p-3 rounded">
-                    <ul className="text-sm mt-1">
-                        {params.categoria && <li>Categoría: {params.categoria}</li>}
-                    </ul>
-                </div>
-            )}
-
             <table className="mt-6 border-collapse border w-full">
                 <thead>
                     <tr className="bg-green-200">
-                        <th className="border px-4 py-2">Producto</th>
-                        <th className="border px-4 py-2">Categoría</th>
-                        <th className="border px-4 py-2">Unidades</th>
-                        <th className="border px-4 py-2">Ventas Totales</th>
+                        <th className="border px-4 py-2">Usuario ID</th>
+                        <th className="border px-4 py-2">Mes</th>
+                        <th className="border px-4 py-2">Total Multas</th>
+                        <th className="border px-4 py-2">Multas Pagadas</th>
+                        <th className="border px-4 py-2">Multas Pendientes</th>
                     </tr>
                 </thead>
 
@@ -115,11 +95,12 @@ export default async function Reporte3Page({ searchParams }: Reporte3PageProps) 
                         </tr>
                     ) : (
                         data.map((p) => (
-                            <tr key={p.categoria + p.producto}>
-                                <td className="border px-4 py-2">{p.producto}</td>
-                                <td className="border px-4 py-2">{p.categoria}</td>
-                                <td className="border px-4 py-2">{p.total_unidades}</td>
-                                <td className="border px-4 py-2">${p.total_ventas}</td>
+                            <tr key={p.usuario_id} className="hover:bg-green-100">
+                                <td className="border px-4 py-2">{p.usuario_id}</td>
+                                <td className="border px-4 py-2">{p.mes}</td>
+                                <td className="border px-4 py-2">{p.total_multas}</td>
+                                <td className="border px-4 py-2">${p.pagadas}</td>
+                                <td className="border px-4 py-2">${p.pendientes}</td>
                             </tr>
                         ))
                     )}

@@ -1,43 +1,90 @@
-import { getUsuariosFrecuentes } from "./actions";
+import { getLibrosPrestadosFrecuentes} from "./actions";
+import { Report1Schema } from "./schema";
 
-export default async function Reporte1Page() {
-  const { ok, data, error } = await getUsuariosFrecuentes();
+interface Reporte1PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
 
-  if (!ok) return <div>Error: {error}</div>;
+export default async function Reporte1Page({ searchParams }: Reporte1PageProps) {
+  const params = Report1Schema.safeParse(await searchParams);
 
-  const totalGastado = data!.reduce(
-    (acc, row) => acc + Number(row.total_gastado),
+  if (!params.success) {
+    return <div>Error: {params.error.message}</div>;
+  }
+
+  const { ok, data, error } = await getLibrosPrestadosFrecuentes(params);
+  if (!ok || !data) return <div>Error: {error}</div>;
+
+  const totalLibros = data!.reduce(
+    (acc, row) => acc + Number(row.libro_id),
     0
   );
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold">Reporte 1 - Usuarios frecuentes y su gasto total</h1>
-      <p className="text-gray-600">Ranking de usuarios que más han comprado.</p>
+      <h1 className="text-2xl font-bold">Reporte 1 - Libros mas prestados</h1>
+      <p className="text-gray-600">Ranking de Libros mas prestados</p>
 
       <h3 className="text-xl font-semibold mt-4">
-        KPI: Total gastado acumulado: ${totalGastado}
+        KPI: Total libros prestados: {totalLibros}
       </h3>
+
+      <form method="get" className="mt-6 p-4 border rounded bg-gray-50">
+        <p className="font-semibold mb-3">Paginación:</p>
+        <div className="flex gap-4 items-center flex-wrap">
+          <div className="flex flex-col">
+            <label htmlFor="page" className="text-sm mb-1">Página:</label>
+            <input
+              id="page"
+              name="page"
+              type="number"
+              min="1"
+              defaultValue={params.data.page}
+              placeholder="Página"
+              className="px-3 py-2 border rounded w-24"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="limit" className="text-sm mb-1">Límite:</label>
+            <input
+              id="limit"
+              name="limit"
+              type="number"
+              min="5"
+              max="50"
+              defaultValue={params.data.limit}
+              placeholder="Límite"
+              className="px-3 py-2 border rounded w-24"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 mt-auto"
+          >
+            Aplicar
+          </button>
+        </div>
+      </form>
 
       <table className="mt-6 border-collapse border w-full">
         <thead>
           <tr className="bg-green-200">
-            <th className="border px-4 py-2">Usuario</th>
-            <th className="border px-4 py-2">Ordenes</th>
-            <th className="border px-4 py-2">Total Gastado</th>
-            <th className="border px-4 py-2">Promedio</th>
+            <th className="border px-4 py-2">ID del Libro</th>
+            <th className="border px-4 py-2">Nombre</th>
+            <th className="border px-4 py-2">Total Prestados</th>
             <th className="border px-4 py-2">Ranking</th>
           </tr>
         </thead>
 
         <tbody>
           {data!.map((u) => (
-            <tr key={u.usuario_id}>
-              <td className="border px-4 py-2">{u.usuario_nombre}</td>
-              <td className="border px-4 py-2">{u.total_ordenes}</td>
-              <td className="border px-4 py-2">${u.total_gastado}</td>
-              <td className="border px-4 py-2">${u.promedio_por_orden}</td>
-              <td className="border px-4 py-2">{u.ranking_por_gasto}</td>
+            <tr key={u.libro_id} className="hover:bg-green-100">
+              <td className="border px-4 py-2">{u.libro_id}</td>
+              <td className="border px-4 py-2">{u.libro_titulo}</td>
+              <td className="border px-4 py-2">{u.total_prestados}</td>
+              <td className="border px-4 py-2">{u.prestados_rank}</td>
             </tr>
           ))}
         </tbody>

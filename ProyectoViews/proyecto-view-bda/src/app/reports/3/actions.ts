@@ -3,27 +3,22 @@
 import { pool } from "../../../../lib/db";
 import { Report3Schema } from "./schema";
 
-export interface ProductoMasVendido {
-  categoria: string;
-  producto: string;
-  total_unidades: number;
-  total_ventas: number;
+export interface ResumenMultas {
+  usuario_id: number;
+  mes: string;
+  total_multas: number;
+  pagadas: number;
+  pendientes: number;
 }
 
-export async function getProductosMasVendidos(rawParams: unknown) {
+export async function getResumenMultas(rawParams: unknown) {
   try {
-    const { categoria, page, limit } = Report3Schema.parse(rawParams);
+    const { page, limit } = Report3Schema.parse(rawParams);
 
     const offset = (page - 1) * limit;
 
     const whereClauses: string[] = [];
     const params: (string|number)[] = [];
-
-    if (categoria) {
-      params.push(categoria);
-      whereClauses.push(`categoria = $${params.length}`);
-    }
-
 
     const whereSQL = whereClauses.length > 0 ? "WHERE " + whereClauses.join(" AND ") : "";
 
@@ -32,17 +27,16 @@ export async function getProductosMasVendidos(rawParams: unknown) {
 
     const q = `
       SELECT *
-      FROM vw_productos_mas_vendidos_por_categoria
-      ${whereSQL}
+      FROM vw_fines_summary
       LIMIT $${params.length - 1} OFFSET $${params.length};
     `;
 
-    const result = await pool.query<ProductoMasVendido>(q, params);
+    const result = await pool.query<ResumenMultas>(q, params);
 
     return { ok: true, data: result.rows };
 
   } catch (err) {
-    console.error("Error al mostrar productos mas vendidos", err);
-    return { ok: false, error: "Error en productos mas vendidos" };
+    console.error("Error al mostrar resumen de multas", err);
+    return { ok: false, error: "Error en resumen de multas" };
   }
 }

@@ -1,10 +1,10 @@
 export default function Home() {
   const reports = [
-    { id: 1, name: "Usuarios frecuentes y gasto total" },
-    { id: 2, name: "Categorías con más ventas" },
-    { id: 3, name: "Productos más vendidos" },
-    { id: 4, name: "Productos sin ventas último mes" },
-    { id: 5, name: "Ventas totales por categoría" },
+    { id: 1, name: "Libros mas prestados" },
+    { id: 2, name: "Prestamos vencidos con dias de retraso y monto sugerido" },
+    { id: 3, name: "Resumen mensual de multas pagadas y pendientes" },
+    { id: 4, name: "Socios activos y tasa de atraso" },
+    { id: 5, name: "Salud de inventario por categoria de libro" },
   ];
 
   return (
