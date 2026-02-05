@@ -3,15 +3,18 @@
 import { pool } from "../../../../lib/db";
 import { Report5Schema } from "./schema";
 
-export interface VentasPorCategoria {
+export interface InventarioPorCategoria {
   categoria: string;
-  total_ventas: number;
-  nivel_ventas: "ALTA" | "MEDIA" | "BAJA";
+  total_libros: number;
+  total_copias: number;
+  copias_disponibles: number;
+  copias_prestadas: number;
+  copias_perdidas: number;
 }
 
-export async function getVentasPorCategoria(rawParams: unknown): Promise<{
+export async function getInventarioPorCategoria(rawParams: unknown): Promise<{
     ok: boolean;
-    data?:VentasPorCategoria[];
+    data?:InventarioPorCategoria[];
     error?:string;
 }>{
   try{
@@ -25,14 +28,14 @@ export async function getVentasPorCategoria(rawParams: unknown): Promise<{
       whereSQL = "WHERE nivel_ventas = $1";
     }
     const q = `SELECT * FROM
-    vw_ventas_totales_por_categoria
+    vw_inventory_health
     ${whereSQL};`;
 
-    const result = await pool.query<VentasPorCategoria>(q, params);
+    const result = await pool.query<InventarioPorCategoria>(q, params);
 
     return {ok: true, data: result.rows};
   } catch (err) {
-    console.error("Error al mostrar ventas por categoria", err);
-    return { ok: false, error: "Error en ventas por categoria"};
+    console.error("Error al mostrar inventario por categoria", err);
+    return { ok: false, error: "Error en inventario por categoria"};
   }
 }

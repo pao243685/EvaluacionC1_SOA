@@ -97,7 +97,7 @@ export default async function Reporte2Page({ searchParams }: Reporte2PageProps) 
               <td className="border px-4 py-2">{c.member_name}</td>
               <td className="border px-4 py-2">{c.copy_barcode}</td>
               <td className="border px-4 py-2">{c.book_titulo}</td>
-              <td className="border px-4 py-2">{c.loaned_at}</td>
+              <td className="border px-4 py-2">{ c.loaned_at}</td>
               <td className="border px-4 py-2">{c.due_at}</td>
               <td className="border px-4 py-2">{c.dias_retraso}</td>
               <td className="border px-4 py-2">${c.monto_sugerido.toFixed(2)}</td>

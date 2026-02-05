@@ -99,8 +99,8 @@ export default async function Reporte3Page({ searchParams }: Reporte3PageProps) 
                                 <td className="border px-4 py-2">{p.usuario_id}</td>
                                 <td className="border px-4 py-2">{p.mes}</td>
                                 <td className="border px-4 py-2">{p.total_multas}</td>
-                                <td className="border px-4 py-2">${p.pagadas}</td>
-                                <td className="border px-4 py-2">${p.pendientes}</td>
+                                <td className="border px-4 py-2">{p.pagadas}</td>
+                                <td className="border px-4 py-2">{p.pendientes}</td>
                             </tr>
                         ))
                     )}

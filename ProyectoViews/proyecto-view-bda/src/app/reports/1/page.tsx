@@ -8,10 +8,6 @@ interface Reporte1PageProps {
 export default async function Reporte1Page({ searchParams }: Reporte1PageProps) {
   const params = Report1Schema.safeParse(await searchParams);
 
-  if (!params.success) {
-    return <div>Error: {params.error.message}</div>;
-  }
-
   const { ok, data, error } = await getLibrosPrestadosFrecuentes(params);
   if (!ok || !data) return <div>Error: {error}</div>;
 
@@ -39,7 +35,7 @@ export default async function Reporte1Page({ searchParams }: Reporte1PageProps) 
               name="page"
               type="number"
               min="1"
-              defaultValue={params.data.page}
+              defaultValue={params.data?.page}
               placeholder="Página"
               className="px-3 py-2 border rounded w-24"
             />
@@ -53,7 +49,7 @@ export default async function Reporte1Page({ searchParams }: Reporte1PageProps) 
               type="number"
               min="5"
               max="50"
-              defaultValue={params.data.limit}
+              defaultValue={params.data?.limit}
               placeholder="Límite"
               className="px-3 py-2 border rounded w-24"
             />

@@ -1,5 +1,5 @@
 
-import { getVentasPorCategoria } from "./actions";
+import { getInventarioPorCategoria } from "./actions";
 import { Report5Schema } from "./schema";
 
 interface Reporte5PageProps {
@@ -9,22 +9,22 @@ interface Reporte5PageProps {
 export default async function Reporte5Page({ searchParams }: Reporte5PageProps) {
   const params = Report5Schema.parse(await searchParams);
 
-  const { ok, data, error } = await getVentasPorCategoria(params);
+  const { ok, data, error } = await getInventarioPorCategoria(params);
   if (!ok || !data) return <div>Error: {error}</div>;
 
-  const totalVentas = data.reduce((acc, row) => acc + Number(row.total_ventas), 0);
+  const totalCopias = data.reduce((acc, row) => acc + Number(row.total_copias), 0);
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold">
-        Reporte 5 - Ventas por categoría
+        Reporte 5 - Inventario por categoría
       </h1>
       <p className="text-gray-600">
-        Lista de categorías con sus ventas totales filtradas por nivel.
+        Lista de categorías con su inventario total filtradas por nivel.
       </p>
 
       <h3 className="text-xl font-semibold mt-4">
-        KPI: Total Ventas ${totalVentas.toFixed(2)}
+        KPI: Total Copias {totalCopias}
       </h3>
 
       <form method="get" className="mt-6 p-4 border rounded bg-gray-50">
@@ -57,8 +57,11 @@ export default async function Reporte5Page({ searchParams }: Reporte5PageProps) 
         <thead>
           <tr className="bg-green-200">
             <th className="border px-4 py-2">Categoría</th>
-            <th className="border px-4 py-2">Total Ventas</th>
-            <th className="border px-4 py-2">Nivel de Ventas</th>
+            <th className="border px-4 py-2">Total Libros</th>
+            <th className="border px-4 py-2">Total Copias</th>
+            <th className="border px-4 py-2">Copias Disponibles</th>
+            <th className="border px-4 py-2">Copias Prestadas</th>
+            <th className="border px-4 py-2">Copias Perdidas</th>
           </tr>
         </thead>
 
@@ -73,12 +76,11 @@ export default async function Reporte5Page({ searchParams }: Reporte5PageProps) 
             data.map((p) => (
               <tr key={p.categoria}>
                 <td className="border px-4 py-2">{p.categoria}</td>
-                <td className="border px-4 py-2">${p.total_ventas}</td>
-                <td className="border px-4 py-2">
-                  <span className="">
-                    {p.nivel_ventas}
-                  </span>
-                </td>
+                <td className="border px-4 py-2">{p.total_libros}</td>
+                <td className="border px-4 py-2">{p.total_copias}</td>
+                <td className="border px-4 py-2">{p.copias_disponibles}</td>
+                <td className="border px-4 py-2">{p.copias_prestadas}</td>
+                <td className="border px-4 py-2">{p.copias_perdidas}</td>
               </tr>
             ))
           )}

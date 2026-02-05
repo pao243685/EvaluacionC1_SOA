@@ -32,10 +32,17 @@ export async function getPrestamosVencidos(rawParams: unknown): Promise<{
       FROM vw_overdue_loans
       LIMIT $1 OFFSET $2;
     `;
+  
 
     const result = await pool.query<PrestamoVencido>(q, params);
 
-    return { ok: true, data: result.rows };
+    const rows: PrestamoVencido[] = result.rows.map((r: PrestamoVencido) => ({
+      ...r,
+      loaned_at: new Date(r.loaned_at).toISOString(),
+      due_at: new Date(r.due_at).toISOString(),
+    }));
+
+    return { ok: true, data: rows };
   } catch (err) {
     console.error("Error al mostrar prestamos vencidos:", err);
     return { ok: false, error: "Error al mostrar prestamos vencidos" };

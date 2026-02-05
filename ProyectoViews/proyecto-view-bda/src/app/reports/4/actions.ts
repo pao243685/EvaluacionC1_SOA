@@ -2,26 +2,29 @@
 
 import { pool } from "../../../../lib/db";
 
-export interface ProductoSinVenta {
-  producto_id: string;
-  producto: string;
-  unidades_vendidas: number;
+export interface MiembroActivo {
+  id_miembro: number;
+  nombre_miembro: string;
+  total_prestamos: number;
+  total_multas: number;
+  prestamos_atrasados: number;
+  tasa_atraso: number;
 }
 
-export async function getProductosSinVentas(): Promise<{
+
+export async function getMiembrosActivos(): Promise<{
     ok: boolean;
-    data?:ProductoSinVenta[];
+    data?:MiembroActivo[];
     error?:string;
 }>{
   try{
     const q = `SELECT * FROM
-    vw_productos_sin_ventas_ultimo_mes;`;
+    vw_member_activity;`;
 
-    const result = await pool.query<ProductoSinVenta>(q);
-
+    const result = await pool.query<MiembroActivo>(q);
     return {ok: true, data: result.rows};
   } catch (err) {
-    console.error("Error al mostrar productos sin ventas", err);
-    return { ok: false, error: "Error en productos sin ventas"};
+    console.error("Error al mostrar miembros activos", err);
+    return { ok: false, error: "Error en miembros activos"};
   }
 }

@@ -11,29 +11,33 @@ export interface ResumenMultas {
   pendientes: number;
 }
 
-export async function getResumenMultas(rawParams: unknown) {
+export async function getResumenMultas(rawParams: unknown): Promise<{
+  ok: boolean;
+  data?: ResumenMultas[];
+  error?: string;
+}> {
   try {
     const { page, limit } = Report3Schema.parse(rawParams);
 
     const offset = (page - 1) * limit;
 
-    const whereClauses: string[] = [];
-    const params: (string|number)[] = [];
+    const params: number[] = [limit, offset];
 
-    const whereSQL = whereClauses.length > 0 ? "WHERE " + whereClauses.join(" AND ") : "";
-
-    params.push(limit);
-    params.push(offset);
 
     const q = `
       SELECT *
       FROM vw_fines_summary
-      LIMIT $${params.length - 1} OFFSET $${params.length};
+      LIMIT $1 OFFSET $2;
     `;
 
     const result = await pool.query<ResumenMultas>(q, params);
 
-    return { ok: true, data: result.rows };
+    const rows: ResumenMultas[] = result.rows.map((r: ResumenMultas) => ({
+      ...r,
+      mes: new Date(r.mes).toISOString().split('T')[0],
+    }));
+
+    return { ok: true, data: rows };
 
   } catch (err) {
     console.error("Error al mostrar resumen de multas", err);
