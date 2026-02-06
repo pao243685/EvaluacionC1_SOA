@@ -14,7 +14,7 @@ Aplicación Next.js que visualiza reportes SQL mediante VIEWS de PostgreSQL. La 
 1. **Clonar el repositorio**
 ```bash
 git clone https://github.com/pao243685/EvaluacionC1_SOA.git
-cd EvaPrac_c1
+cd EvaluacionC1_SOA/ProyectoViews/proyecto-view-bda
 ```
 
 2. **Levantar los servicios**
