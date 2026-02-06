@@ -12,16 +12,17 @@
 
 CREATE OR REPLACE VIEW vw_most_borrowed_books AS
   SELECT
-    u.id AS libro_id,
-    u.title AS libro_titulo,
+    b.id AS libro_id,
+    b.author AS libro_autor,
+    b.title AS libro_titulo,
       COUNT(l.id) AS total_prestados,
       RANK() OVER (
         ORDER BY COUNT(l.id) DESC
         ) AS prestados_rank
-  FROM books u
-  LEFT JOIN copies c ON u.id = c.book_id
+  FROM books b
+  LEFT JOIN copies c ON b.id = c.book_id
   LEFT JOIN loans l ON c.id = l.copy_id
-  GROUP BY u.id, u.title;
+  GROUP BY b.id, b.title, b.author;
 
 
 -- VIEW: vw_overdue_loans

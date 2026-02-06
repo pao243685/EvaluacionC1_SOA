@@ -11,30 +11,43 @@ export interface ResumenMultas {
   pendientes: number;
 }
 
-export async function getResumenMultas(rawParams: unknown): Promise<{
-  ok: boolean;
-  data?: ResumenMultas[];
-  error?: string;
-}> {
+export async function getResumenMultas(rawParams: unknown) {
   try {
-    const { page, limit } = Report3Schema.parse(rawParams);
+    const { page, limit, fromDate, toDate } = Report3Schema.parse(rawParams);
 
     const offset = (page - 1) * limit;
 
-    const params: number[] = [limit, offset];
+    const params: (string | number)[] = [limit, offset];
+    const whereClauses: string[] = [];
 
+    if (fromDate) {
+      params.push(fromDate);
+      whereClauses.push(`mes >= $${params.length}`);
+    }
+
+    if (toDate) {
+      params.push(toDate);
+      whereClauses.push(`mes <= $${params.length}`);
+    }
+
+    const whereSQL =
+      whereClauses.length > 0
+        ? `WHERE ${whereClauses.join(" AND ")}`
+        : "";
 
     const q = `
       SELECT *
       FROM vw_fines_summary
+      ${whereSQL}
+      ORDER BY mes
       LIMIT $1 OFFSET $2;
     `;
 
     const result = await pool.query<ResumenMultas>(q, params);
 
-    const rows: ResumenMultas[] = result.rows.map((r: ResumenMultas) => ({
+    const rows = result.rows.map((r) => ({
       ...r,
-      mes: new Date(r.mes).toISOString().split('T')[0],
+      mes: new Date(r.mes).toISOString().split("T")[0],
     }));
 
     return { ok: true, data: rows };

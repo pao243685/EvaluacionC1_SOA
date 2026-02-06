@@ -65,6 +65,19 @@ export default async function Reporte2Page({ searchParams }: Reporte2PageProps) 
             />
           </div>
 
+          <div className="flex flex-col">
+            <label htmlFor="minDays" className="text-sm mb-1">Minimo de dias de retraso:</label>
+            <input
+              id="minDays"
+              name="minDays"
+              type="number"
+              min="1"
+              defaultValue={params.minDays}
+              placeholder="Días mínimos de retraso"
+              className="px-3 py-2 border rounded w-24"
+            />
+          </div>
+
           <button
             type="submit"
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 mt-auto"

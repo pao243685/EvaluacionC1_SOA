@@ -21,15 +21,15 @@ export async function getPrestamosVencidos(rawParams: unknown): Promise<{
   error?: string;
 }> {
   try {
-    const { page, limit } = Report2Schema.parse(rawParams);
+    const { page, limit, minDays } = Report2Schema.parse(rawParams);
 
     const offset = (page - 1) * limit;
 
-    const params: number[] = [limit, offset];
-
+    const params: number[] = [limit, offset, minDays];
     const q = `
       SELECT *
       FROM vw_overdue_loans
+      WHERE dias_retraso >= $3
       LIMIT $1 OFFSET $2;
     `;
   

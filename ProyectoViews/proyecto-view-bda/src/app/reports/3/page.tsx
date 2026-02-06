@@ -66,6 +66,17 @@ export default async function Reporte3Page({ searchParams }: Reporte3PageProps) 
                         />
                     </div>
 
+                    <div className="flex flex-col">
+                        <label className="text-sm mb-1">Desde mes:</label>
+                        <input type="date" name="fromDate" defaultValue={params.fromDate ?? ""} className="px-3 py-2 border rounded" />
+                    </div>
+
+                    <div className="flex flex-col">
+                        <label className="text-sm mb-1">Hasta mes:</label>
+                        <input type="date" name="toDate" defaultValue={params.toDate ?? ""} className="px-3 py-2 border rounded" />
+                    </div>
+
+
                     <button
                         type="submit"
                         className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 mt-auto"
