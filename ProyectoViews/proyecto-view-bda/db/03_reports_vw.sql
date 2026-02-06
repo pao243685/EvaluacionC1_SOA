@@ -90,7 +90,8 @@ SELECT
 FROM fines f
 JOIN loans l ON f.loan_id = l.id
 JOIN members m ON l.member_id = m.id
-GROUP BY m.id, DATE_TRUNC('month', COALESCE(f.paid_at, CURRENT_DATE));
+GROUP BY m.id, DATE_TRUNC('month', COALESCE(f.paid_at, CURRENT_DATE))
+having COUNT(*) > 0;
 
 
 
@@ -134,7 +135,14 @@ SELECT
         COALESCE(prestamos_atrasados::decimal / NULLIF(total_prestamos, 0), 0) * 100,
         2
     ) AS tasa_atraso
-FROM consulta1;
+FROM consulta1
+GROUP BY 
+    id_miembro,
+    nombre_miembro,
+    total_prestamos,
+    total_multas,
+    prestamos_atrasados
+HAVING total_prestamos > 0;
 
 
 

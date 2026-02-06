@@ -38,8 +38,8 @@ export async function getPrestamosVencidos(rawParams: unknown): Promise<{
 
     const rows: PrestamoVencido[] = result.rows.map((r: PrestamoVencido) => ({
       ...r,
-      loaned_at: new Date(r.loaned_at).toISOString(),
-      due_at: new Date(r.due_at).toISOString(),
+      loaned_at: new Date(r.loaned_at).toISOString().split("T")[0],
+      due_at: new Date(r.due_at).toISOString().split("T")[0],
     }));
 
     return { ok: true, data: rows };

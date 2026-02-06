@@ -1,6 +1,3 @@
--- ============================================
--- =============== MEMBERS =====================
--- ============================================
 
 INSERT INTO members (name, email, member_type)
 VALUES
@@ -47,10 +44,6 @@ VALUES
 
 
 
--- ============================================
--- ================= BOOKS =====================
--- ============================================
-
 INSERT INTO books (title, author, category, isbn)
 VALUES
 ('Cien Años de Soledad', 'Gabriel García Márquez', 'Novela', '9780307474728'),
@@ -95,11 +88,6 @@ VALUES
 ('Carrie', 'Stephen King', 'Terror', '9780307743664');
 
 
-
--- ============================================
--- ================ COPIES =====================
--- ============================================
-
 INSERT INTO copies (book_id, barcode, status)
 VALUES
 (1, 'BC0001', 'disponible'),
@@ -141,18 +129,14 @@ VALUES
 (34,'BC0037', 'disponible'),
 (35,'BC0038', 'prestado'),
 (36,'BC0039', 'disponible'),
-(37,'BC0040', 'disponible'),
-(38,'BC0041', 'prestado'),
-(39,'BC0042', 'disponible'),
-(40,'BC0043', 'disponible'),
+(37,'BC0040', 'perdido'),
+(38,'BC0041', 'perdido'),
+(39,'BC0042', 'perdido'),
+(40,'BC0043', 'perdido'),
 (20,'BC0044', 'disponible'),
 (14,'BC0045', 'disponible');
 
 
-
--- ============================================
--- ================= LOANS =====================
--- ============================================
 
 INSERT INTO loans (member_id, copy_id, due_at, returned_at)
 VALUES
@@ -214,11 +198,6 @@ VALUES
 (28, 38, NOW() - INTERVAL '8 days', NULL);
 
 
-
--- ============================================
--- ================= FINES =====================
--- Only for overdue loans
--- ============================================
 
 INSERT INTO fines (loan_id, amount, paid_at)
 VALUES
